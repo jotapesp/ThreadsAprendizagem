@@ -1,0 +1,47 @@
+EXERCÍCIO 3
+
+
+A) Consiste do desafio referente a sincronização de 2 ou mais Threads concorrentes que tenham acesso a um mesmo recurso, o que resulta na possibilidade de conflitos entre as Threads que disputam pelo controle da CPU para acessar esse mesmo recurso. Por exemplo, imaginando que uma Thread seja o Produtor e outra seja o Consumidor, a Thread Produtor vai alimentar um espaço na memória enquanto o Consumidor vai consumi-los, liberando espaço, agora se o produtor foi muito mais rápido que o consumidor, pode acabar gerando perdas de dados.
+Para contornar esse problema, Threads podem ser usadas de maneira que o Produtor seja bloqueado enquanto que o recurso esteja incapacidade de receber mais dados (por exemplo, nesse caso, a memória cheia), o produtor deve ser bloqueado até que haja mais espaço, e o mesmo no caso do consumidor, caso não haja nada para ele consumir, ele deve ser bloqueado para evitar ócio da CPU.
+
+B) Problema dos leitores/escritores: nessa situação, um conjunto de Threads acessam de forma concorrente uma área de memória compartilhada para realizar leitura e escrita de valores. Enquanto que as leituras podem ser feitas em paralelo, as escritas tem que ser feitas com acesso exclusivo à área compartilhada. Uma primeira solução seria usar um Semaphore com limite de 1, desse modo só um processo ocorreria por vez, mas sacrificaria muito a performance. Já que que leituras podem ser executadas paralelamente, existe outra solução, que seria a de priorização das tarefas/Threads leitoras, onde elas controlariam por um mutex (Mutual Exclusion) compartilhado entre elas qual tarefa pode acessar a área compartilhada, segurando esse mutex afim de libera-lo apenas após a última Thread leitora ser finalizada. Isso ajuda nas operações de leitura, pois elas podem ser executadas simultaneamente mas cria um problema para as de escrita, que teriam que esperar/serem suspensas caso existe alguma Thread leitora para acessar a área compartilhada.
+
+--------------------------------------------------------------------------------------
+EXERCÍCIO 4
+
+
+Objeto: Thread
+Descrição: objeto que representa um único Thread em execução (cria-se uma Thread a partir dele.)
+Comando inicialização: .start()
+
+Objeto: Lock
+Descrição: Objeto de bloqueio primitido (impedir que uma determinada instrução execute até que uma determinada condição seja desfeita).
+Comando inicialização: .acquire() (e .release()) . Se o objeto Lock está unlocked (destrancado) acquire() mudará para locked (trancado), quando o objeto está locked, acquire() vai bloquear até que outra Thread chame release() para destrancado-lo (torná-lo unlocked). Então, acquire() reseta o estado para locked e retorna. O método release() só pode ser chamado se o estado do objeto é "locked".
+
+Objeto: RLock
+Descrição: objeto de bloqueio Lock - só que reentrante - capacidade para um único Thread de readquirir (acquire() múltiplas vezes) um bloqueio que já é mantido - acontece diversas vezes de forma recursiva.
+Comando inicialização: .acquire() (e .release()).
+
+Objeto: Condition
+Descrição: objeto de variável de condição - faz com que um Thread espere até que certa "condição" seja satisfeita por outro Thread (como mudança de estado ou algum valor).
+Comando inicialização: .notify() e .wait() . Primeiro o with statement para trazer o lock associado, acquire() e release() chamam os métodos correspondentes do lock, e então wait() e notify() entram em ação, sendo wait() para bloquear/segurar o bloco ("solta" o lock para que ele bloqueie) até que outra thread chame notify() ou notify_all() e então wait() vai re-adquirir o lock e retornar.
+
+Objeto: Event
+Descrição: versão mais geral da variável de condição, em que várias Threads podem ser feitas para aguardar algum evento e todas as Threads em espera só serão ativadas quando o evento acontecer.
+Comando inicialização: set() inicia e clear() finaliza.
+
+Objeto: Semaphore
+Descrição: fornece um contador de recursos finitos compartilhados entre blocks de Threads quando nenhum está disponível. O contador é decrementado cada vez que acquire() é chamado e incrementado a cada release(). Quando o contador chega em 0, ele bloqueia, esperando alguma outra Thread chamar release().
+Comando inicialização: release() e acquire() gerenciam a inicialização/bloqueio.
+
+Objeto: BoundedSemaphore
+Descrição: é uma classe de Semaphore que não vai deixar o valor atual ultrapassar o valor inicial.
+Comando inicialização: release()
+
+Objeto: Timer
+Descrição: Segura uma função/ação até que um certo período de tempo passe.
+Comando inicialização: Como é um subclasse de Threads, start() também inicializa um Timer.
+
+Objeto: Barrier
+Descrição: criação de uma barreira na qual um número especificado de Threads deva ser atingido antes que todos tenham a permissão para continuar.
+Comando inicialização: b = Barrier(parties, timeout=5) onde parties é o número de threads que deve atingir. Cada thread que tenta passar a barrier chamando wait() e é bloqueada até que o parties numero de threads tenham chamado wait().
